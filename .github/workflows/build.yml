@@ -1,0 +1,21 @@
+name: Build Mod
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Unpack and Build
+        run: |
+          unzip -q MC-MAIN.zip -d unpacked
+          cd "$(dirname "$(find unpacked -name gradlew | head -n 1)")"
+          chmod +x gradlew
+          ./gradlew build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: built-mod
+          path: unpacked/**/build/libs/*.jar
